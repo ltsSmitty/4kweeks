@@ -2,7 +2,7 @@ import { error } from '@sveltejs/kit';
 import twilio from 'twilio';
 import { env } from '$env/dynamic/private';
 
-const client = twilio(env.TWILIO_ACCOUNT_SID, env.TWILIO_AUTH_TOKEN);
+const client = twilio(env.SVELTEKIT_TWILIO_ACCOUNT_SID, env.SVELTEKIT_TWILIO_AUTH_TOKEN);
 
 export const POST = async ({ request }) => {
 	try {
@@ -12,7 +12,7 @@ export const POST = async ({ request }) => {
 		const { myNum, msgBody } = smsProps;
 		try {
 			const { sid } = await client.messages.create({
-				from: env.TWILIO_PHONE_NUMBER,
+				from: env.SVELTEKIT_TWILIO_PHONE_NUMBER,
 				to: myNum,
 				body: msgBody
 			});

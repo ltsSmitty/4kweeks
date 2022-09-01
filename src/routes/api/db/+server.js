@@ -2,7 +2,7 @@ import { createClient } from '@supabase/supabase-js';
 import { error } from '@sveltejs/kit';
 import { env } from '$env/dynamic/private';
 
-const supabase = createClient(env.SUPABASE_URL, env.SUPABASE_SEC_KEY);
+const supabase = createClient(env.SVELTEKIT_SUPABASE_URL, env.SVELTEKIT_SUPABASE_SEC_KEY);
 
 export const GET = async (userData) => {
 	const { id, phone_number } = await userData;
