@@ -1,6 +1,6 @@
 import { error } from '@sveltejs/kit';
 import twilio from 'twilio';
-import { env } from '$env/static/private';
+import { env } from '$env/dynamic/private';
 
 const client = twilio(env.TWILIO_ACCOUNT_SID, env.TWILIO_AUTH_TOKEN);
 
