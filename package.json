@@ -6,7 +6,8 @@
 		"build": "vite build",
 		"test": "playwright test",
 		"lint": "prettier --check . && eslint .",
-		"format": "prettier --write ."
+		"format": "prettier --write .",
+		"preview": "vite preview"
 	},
 	"devDependencies": {
 		"@playwright/test": "^1.25.0",
