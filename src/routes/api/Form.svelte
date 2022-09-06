@@ -23,14 +23,14 @@
 		<div class="birthdayInput">
 			<form class="birthday-form" on:submit|preventDefault>
 				<label for="birthday" />
-				<DatePicker on:change={(e) => (birthday = e.detail)}>
+				<DatePicker on:change={(e) => ($birthday = e.detail)}>
 					<DatePickerInput
 						for="birthday"
 						invalid={false}
 						invalidText="Invalid date"
 						labelText="Date of birth"
 						placeholder="mm/dd/yyyy"
-						on:submit={(e) => (birthday = e.detail)}
+						on:submit={(e) => ($birthday = e.detail)}
 					/>
 				</DatePicker>
 				<Button type="submit">Submit</Button>

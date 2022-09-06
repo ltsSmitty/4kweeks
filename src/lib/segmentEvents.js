@@ -1,4 +1,4 @@
-var Analytics = require('analytics-node');
+import Analytics from 'analytics-node';
 var analytics = new Analytics('GRjitKsHLpyTNvEnci1lLqZC18omDbIy', { flushAt: 1 });
 // import { analytics } from '$lib/stores';
 

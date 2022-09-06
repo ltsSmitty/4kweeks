@@ -109,7 +109,7 @@
 	<a href="/guides">View guides</a>
 	<a href="about">About</a>
 </div>
-<Form on:submit={(e) => (birthday = e.detail)} />
+<Form on:submit={(e) => ($birthday = e.detail)} />
 
 <div style="margin: var(--cds-layout-01) 0">
 	Output: First Name: {firstName} <br />
