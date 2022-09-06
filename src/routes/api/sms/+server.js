@@ -1,6 +1,7 @@
 import { error } from '@sveltejs/kit';
 import twilio from 'twilio';
 import { env } from '$env/dynamic/private';
+import { smsSent } from '$lib/segmentEvents';
 
 const client = twilio(env.SVELTEKIT_TWILIO_ACCOUNT_SID, env.SVELTEKIT_TWILIO_AUTH_TOKEN);
 
@@ -19,6 +20,7 @@ export const POST = async ({ request }) => {
 
 			console.log(`sid: ${sid}`);
 			if (sid) {
+				smsSent({ toNumber: myNum, msgBody });
 				return await new Response(JSON.stringify(`SMS send to ${myNum}. Message SID: ${sid}`));
 			}
 		} catch (err) {

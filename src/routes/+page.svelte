@@ -2,7 +2,6 @@
 	// style with a 10% gray colour.
 	// find other style options at https://carbon-components-svelte.onrender.com/
 	import 'carbon-components-svelte/css/g10.css';
-	import { addUser } from './api/db/db';
 	import {
 		Select,
 		SelectItem,
@@ -10,15 +9,14 @@
 		DatePickerInput,
 		Button
 	} from 'carbon-components-svelte';
-	import dayjs from 'dayjs';
-	import { each } from 'svelte/internal';
+	import { onMount } from 'svelte';
+	import { analytics, birthday } from '$lib/stores';
 	// import { sendSMS } from './api/sms/sms';
+	import * as db from './api/db/db';
+	import Form from './api/Form.svelte';
 
 	let title = 'SMS sending test';
-	let firstName, phoneNumber, dayChoice, birthday;
-	const dayChoices = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-	let sel = dayChoices[1];
-
+	let sel = 0;
 	const sendSMS = async (message) => {
 		const myNum = '14074735068';
 		const response = await fetch('/api/sms', {
@@ -35,18 +33,20 @@
 		console.log(resp);
 	};
 
-	let validInput = false;
-	const validatePhoneNumber = (phone) => {};
+	let firstName = 'p',
+		phoneNumber = Math.floor(Math.random() * 10000000000),
+		dayChoice,
+		validDate;
 
-	let validDate;
+	// const validateDate = () => {
+	// 	console.log($birthday);
+	// 	validDate = dayjs($birthday).isValid();
+	// 	console.log(`validDate: ${validDate}`);
+	// };
 
-	const validateDate = () => {
-		console.log(birthday);
-		validDate = dayjs(birthday).isValid();
-		console.log(`validDate: ${validDate}`);
-	};
-
-	// $: validDate = !dayjs(birthday).isValid();
+	// const logBirthday = () => {
+	// 	analytics.identify('birthday');
+	// };
 
 	const calculateWeeksFromBirthdayToToday = (birthday) => {
 		const date1 = new Date(birthday);
@@ -60,7 +60,33 @@
 	let weeksOld;
 	$: weeksOld = calculateWeeksFromBirthdayToToday(birthday);
 
-	$: validDate = dayjs(birthday).isValid();
+	const handleSubmit = () => {
+		const body = {
+			phone_number: phoneNumber,
+			first_name: firstName,
+			birthday: '04/24/1990',
+			message_day_preference: dayChoice,
+			subscribed: true
+		};
+		db.upsertUser(body);
+	};
+
+	const getUser = async () => {
+		let user = await db.getUser(phoneNumber);
+		console.log(user);
+	};
+
+	let message_day_preference = 0;
+	const getUsersbySubscriptionDay = async () => {
+		console.log(`attempting to get users with day ${message_day_preference}`);
+		let user = await db.getUsersbySubscriptionDay(message_day_preference);
+		console.log(user);
+	};
+
+	let anonymousId;
+	onMount(async () => {
+		anonymousId = (await analytics.user()).anonymousId();
+	});
 </script>
 
 <div class="index">
@@ -71,54 +97,25 @@
 		{/if}
 	</p>
 	<button on:click={sendSMS(title)}> SMS me</button>
-	<button on:click={addUser}> Add user to DB</button>
+	<button on:click={handleSubmit}> Add user to DB</button>
+	<br />
+	<button on:click={getUser}> Get user with phone number</button>
+	<br />
+	<button on:click={getUsersbySubscriptionDay}> Get users with the given day</button>
+	<input type="text" bind:value={message_day_preference} /><br />
+
 	<input type="text" bind:value={title} />
 
 	<a href="/guides">View guides</a>
 	<a href="about">About</a>
 </div>
+<Form on:submit={(e) => (birthday = e.detail)} />
 
-<div class="birthdayInput">
-	<form class="birthday-form" on:submit|preventDefault={validateDate}>
-		<label for="birthday" />
-		<DatePicker on:change={(e) => (birthday = e.detail)}>
-			<DatePickerInput
-				for="birthday"
-				invalid={false}
-				invalidText="Invalid date"
-				labelText="Date of birth"
-				placeholder="mm/dd/yyyy"
-				on:submit={(e) => (birthday = e.detail)}
-			/>
-		</DatePicker>
-		<Button type="submit" disabled={!validDate}>Submit</Button>
-	</form>
-</div>
-
-<div class="sign-up-form-div">
-	<form class="sign-up-form" on:submit|preventDefault>
-		<label for="firstName">First Name</label>
-		<input bind:value={firstName} />
-
-		<label for="phoneNumber">Phone Number</label>
-		<input bind:value={phoneNumber} />
-
-		<Select
-			labelText="What day of the week would you like to receive texts?"
-			on:change={(e) => (sel = e.detail)}
-			selected={sel}
-		>
-			{#each dayChoices as dayz, i}
-				<SelectItem value={dayz} />
-			{/each}
-		</Select>
-	</form>
-</div>
 <div style="margin: var(--cds-layout-01) 0">
 	Output: First Name: {firstName} <br />
-	Birthday: {birthday}<br />
+	Birthday: {$birthday}<br />
 	Phone number: {phoneNumber}<br />
-	Selected day: <strong>{sel}</strong>
+	Selected day: <strong>{sel}</strong><br />
 </div>
 
 <style>
