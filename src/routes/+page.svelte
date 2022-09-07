@@ -83,6 +83,14 @@
 		console.log(user);
 	};
 
+	const fakeStartCronJob = async () => {
+		const response = await fetch('/api/cron', {
+			method: 'POST'
+		});
+		let resp = await response.json();
+		console.log(`cron job response: ${resp}`);
+	};
+
 	let anonymousId;
 	onMount(async () => {
 		anonymousId = (await analytics.user()).anonymousId();
@@ -100,6 +108,8 @@
 	<button on:click={handleSubmit}> Add user to DB</button>
 	<br />
 	<button on:click={getUser}> Get user with phone number</button>
+	<br />
+	<button on:click={fakeStartCronJob}> Fake start cron job.</button>
 	<br />
 	<button on:click={getUsersbySubscriptionDay}> Get users with the given day</button>
 	<input type="text" bind:value={message_day_preference} /><br />
