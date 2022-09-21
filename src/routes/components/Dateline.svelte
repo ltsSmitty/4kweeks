@@ -3,12 +3,6 @@
 	import { birthday } from '$lib/stores';
 	import { calculateWeeksFromBirthdayToToday, calculateLastWeek } from '$lib/helpers';
 	import 'carbon-components-svelte/css/all.css';
-	let xPos = 50;
-	let yPos = 50;
-
-	$: left = `${xPos}%`;
-	$: top = `${yPos}%`;
-
 	$: year = $birthday.slice(0, 4);
 	$: month = $birthday.slice(5, 7);
 	$: day = $birthday.slice(8, 10);
@@ -38,15 +32,9 @@
 <label for="birthday">Birthday</label>
 <input type="date" for="birthday" bind:value={$birthday} />
 
-<label for="positionX">X </label>
-<input id="positionX" type="range" bind:value={xPos} />
-
-<label for="positionY">Y </label>
-<input id="positionY" type="range" bind:value={yPos} />
-
 <!-- This is optimized the same way as the original example -->
-<div class="box" style:left style:top>
-	({xPos}, {yPos}) Birthday: {$birthday}
+<div class="box">
+	Birthday: {$birthday}
 	Weeks so far: {currentWeek}
 	{lastDate}
 </div>
