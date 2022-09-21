@@ -11,9 +11,10 @@
 	} from 'carbon-components-svelte';
 	import { onMount } from 'svelte';
 	import { analytics, birthday } from '$lib/stores';
+	import { calculateWeeksFromBirthdayToToday } from '$lib/helpers';
 	// import { sendSMS } from './api/sms/sms';
 	import * as db from './api/db/db';
-	import Form from './api/Form.svelte';
+	import Form from './components/Form.svelte';
 
 	let title = 'SMS sending test';
 	let sel = 0;
@@ -37,25 +38,6 @@
 		phoneNumber = Math.floor(Math.random() * 10000000000),
 		dayChoice,
 		validDate;
-
-	// const validateDate = () => {
-	// 	console.log($birthday);
-	// 	validDate = dayjs($birthday).isValid();
-	// 	console.log(`validDate: ${validDate}`);
-	// };
-
-	// const logBirthday = () => {
-	// 	analytics.identify('birthday');
-	// };
-
-	const calculateWeeksFromBirthdayToToday = (birthday) => {
-		const date1 = new Date(birthday);
-		const now = new Date();
-		const difference = now.getTime() - date1.getTime();
-		const totalDays = Math.ceil(difference / (1000 * 3600 * 24));
-		const totalWeeks = Math.floor(totalDays / 7);
-		return totalWeeks;
-	};
 
 	let weeksOld;
 	$: weeksOld = calculateWeeksFromBirthdayToToday(birthday);
@@ -84,7 +66,7 @@
 	};
 
 	const fakeStartCronJob = async () => {
-		const response = await fetch('/api/cron', {
+		const response = await fetch('/api/cronjob', {
 			method: 'POST'
 		});
 		let resp = await response.json();
