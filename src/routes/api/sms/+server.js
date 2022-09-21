@@ -7,10 +7,12 @@ const client = twilio(env.SVELTEKIT_TWILIO_ACCOUNT_SID, env.SVELTEKIT_TWILIO_AUT
 
 export const POST = async ({ request }) => {
 	try {
+		// console.log(api.length);
 		const smsProps = await request.json();
 		console.log(`inside the server: ${JSON.stringify(smsProps)}`);
 
-		const { myNum, msgBody } = smsProps;
+		let { myNum, msgBody } = smsProps;
+		myNum = await validatePhoneNumber(myNum);
 		try {
 			const { sid } = await client.messages.create({
 				from: env.SVELTEKIT_TWILIO_PHONE_NUMBER,
@@ -31,5 +33,19 @@ export const POST = async ({ request }) => {
 		return await new Response(JSON.stringify(`done`));
 	} catch (err) {
 		throw error(500, `Improper post, likely POST body was not json. ${err}`);
+	}
+};
+
+export const validatePhoneNumber = async (number) => {
+	try {
+		let phoneNumberStatus = await client.lookups.v1
+			.phoneNumbers(number)
+			.fetch({ countryCode: 'US' });
+		console.log(
+			`Validating phone number. Given number ${number} became ${phoneNumberStatus.phoneNumber}.`
+		);
+		return phoneNumberStatus.phoneNumber;
+	} catch (err) {
+		throw err(404, `Error validating phone number: ${err}`);
 	}
 };
