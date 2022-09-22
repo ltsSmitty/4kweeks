@@ -1,15 +1,29 @@
 <script>
-	import { Theme, DatePicker, DatePickerInput, FormLabel } from 'carbon-components-svelte';
+	import { Theme, DatePicker, DatePickerInput, Button } from 'carbon-components-svelte';
 	import { birthday } from '$lib/stores';
 	import { calculateWeeksFromBirthdayToToday, calculateLastWeek } from '$lib/helpers';
-	import 'carbon-components-svelte/css/all.css';
+	import { onMount } from 'svelte';
+
+	let weekCounter = 4000;
 	$: year = $birthday.slice(0, 4);
 	$: month = $birthday.slice(5, 7);
 	$: day = $birthday.slice(8, 10);
 	$: currentWeek = calculateWeeksFromBirthdayToToday($birthday);
 	$: lastDate = calculateLastWeek($birthday);
+	onMount(() => {
+		setInterval(
+			() => {
+				if (weekCounter <= 0) return;
+				weekCounter -= 1;
+			},
+			1000 //count down one every two seconds
+		);
+	});
 </script>
 
+<div class="header">
+	<h1>{weekCounter} Weeks</h1>
+</div>
 <div class="wrapper">
 	<div class="dateline-wrapper">
 		<div class="dateline">
@@ -47,6 +61,7 @@
 		position: absolute;
 	}
 	.wrapper {
+		margin-top: 50px;
 		height: 100px;
 	}
 
@@ -59,7 +74,9 @@
 
 	.dateline {
 		width: 80%;
-		background-color: lime;
+		background-color: var(--dark);
+		border-radius: 10px;
+		/* background-color: lime; */
 		height: 100px;
 		position: relative;
 	}

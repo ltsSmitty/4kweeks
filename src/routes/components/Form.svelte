@@ -1,7 +1,6 @@
 <script>
 	// style with a 10% gray colour.
 	// find other style options at https://carbon-components-svelte.onrender.com/
-	import 'carbon-components-svelte/css/g10.css';
 	import {
 		Select,
 		SelectItem,
