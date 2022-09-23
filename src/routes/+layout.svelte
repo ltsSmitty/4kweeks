@@ -5,14 +5,14 @@
 </script>
 
 <Theme
-	theme="g90"
+	theme="g10"
 	tokens={{
 		'interactive-01': '#a6cfd5',
 		// 'hover-primary': '#ee5396',
 		'active-primary': '#9f1853',
 		// 'text-secondary': '#5865F2',
 		'text-primary': '#5865F2',
-		'ui-background': '#0D0221' //Xiketic
+		'ui-background': '#c2e7d9' //Xiketic
 	}}
 />
 <Analytics />

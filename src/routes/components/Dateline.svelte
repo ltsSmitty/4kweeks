@@ -1,67 +1,39 @@
 <script>
-	import { Theme, DatePicker, DatePickerInput, Button } from 'carbon-components-svelte';
+	import { DatePicker, DatePickerInput, Button } from 'carbon-components-svelte';
 	import { birthday } from '$lib/stores';
 	import { calculateWeeksFromBirthdayToToday, calculateLastWeek } from '$lib/helpers';
-	import { onMount } from 'svelte';
+	import ArrowUp from 'carbon-icons-svelte/lib/ArrowUp.svelte';
 
-	let weekCounter = 4000;
 	$: year = $birthday.slice(0, 4);
 	$: month = $birthday.slice(5, 7);
 	$: day = $birthday.slice(8, 10);
-	$: currentWeek = calculateWeeksFromBirthdayToToday($birthday);
+	$: currentWeek = calculateWeeksFromBirthdayToToday($birthday) || 2000;
 	$: lastDate = calculateLastWeek($birthday);
-	onMount(() => {
-		setInterval(
-			() => {
-				if (weekCounter <= 0) return;
-				weekCounter -= 1;
-			},
-			1000 //count down one every two seconds
-		);
-	});
+	$: lastDaymdy = `${lastDate.slice(5, 7)}/${lastDate.slice(8, 10)}/${lastDate.slice(0, 4)}`;
 </script>
 
-<div class="header">
-	<h1>{weekCounter} Weeks</h1>
-</div>
 <div class="wrapper">
 	<div class="dateline-wrapper">
-		<div class="dateline">
+		<div
+			class="dateline"
+			style:background="linear-gradient(0.25turn, var(--light) {(currentWeek * 100) / 4000}%,
+			var(--dark) {(currentWeek * 100) / 4000}%)"
+		>
 			<div class="year-start" style:left="{(currentWeek * 100) / 4000}%">
 				<div class="month-start" style:left="{(month * 100) / 12}%">
 					<p class="week-marker">{currentWeek} weeks lived</p>
 				</div>
 			</div>
-
-			<p class="day-born">{$birthday}</p>
-			<p class="last-day">{lastDate}</p>
+			<p class="first-day">{$birthday}</p>
+			<ArrowUp size="24" />
+			<p class="last-day">{lastDaymdy}</p>
 		</div>
 	</div>
 </div>
 
-<DatePicker on:change bind:value={$birthday}>
-	<DatePickerInput labelText="Birthday" placeholder="mm/dd/yyyy" helperText="Example: 05/12/1887" />
-</DatePicker>
-
-<label for="birthday">Birthday</label>
-<input type="date" for="birthday" bind:value={$birthday} />
-
-<!-- This is optimized the same way as the original example -->
-<div class="box">
-	Birthday: {$birthday}
-	Weeks so far: {currentWeek}
-	{lastDate}
-</div>
-
 <style>
-	.box {
-		height: 80px;
-		width: 80px;
-		background: pink;
-		position: absolute;
-	}
 	.wrapper {
-		margin-top: 50px;
+		margin: 16px auto 5em;
 		height: 100px;
 	}
 
@@ -74,9 +46,7 @@
 
 	.dateline {
 		width: 80%;
-		background-color: var(--dark);
-		border-radius: 10px;
-		/* background-color: lime; */
+		background-color: lime;
 		height: 100px;
 		position: relative;
 	}
@@ -91,10 +61,35 @@
 	}
 
 	.month-start {
+		visibility: none;
 		width: 20%;
-		background-color: blue;
+		background-color: var(--lime);
 		height: 100%;
 		z-index: 2;
 		position: absolute;
+	}
+
+	.week-marker {
+		background-color: var(--light);
+		border: 0.1em solid;
+		border-color: var(--blackish);
+		position: absolute;
+		transform: translate(-48%, 0);
+		width: max-content;
+		top: 110%;
+		padding: 2px;
+		/* box-sizing: revert; */
+	}
+
+	.first-day {
+		position: absolute;
+		left: -5%;
+		top: 110%;
+	}
+
+	.last-day {
+		position: absolute;
+		right: -5%;
+		top: 110%;
 	}
 </style>
