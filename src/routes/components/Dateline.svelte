@@ -1,13 +1,10 @@
 <script>
-	import { DatePicker, DatePickerInput, Button } from 'carbon-components-svelte';
-	import { birthday } from '$lib/stores';
+	import { birthday, weeksOld } from '$lib/stores';
 	import { calculateWeeksFromBirthdayToToday, calculateLastWeek } from '$lib/helpers';
 	import ArrowUp from 'carbon-icons-svelte/lib/ArrowUp.svelte';
 
-	$: year = $birthday.slice(0, 4);
-	$: month = $birthday.slice(5, 7);
-	$: day = $birthday.slice(8, 10);
-	$: currentWeek = calculateWeeksFromBirthdayToToday($birthday) || 2000;
+	$: month = $birthday.slice(0, 2).endsWith('/') ? $birthday.slice(0, 1) : $birthday.slice(0, 2);
+	$: $weeksOld = calculateWeeksFromBirthdayToToday($birthday) || 2000;
 	$: lastDate = calculateLastWeek($birthday);
 	$: lastDaymdy = `${lastDate.slice(5, 7)}/${lastDate.slice(8, 10)}/${lastDate.slice(0, 4)}`;
 </script>
@@ -16,16 +13,19 @@
 	<div class="dateline-wrapper">
 		<div
 			class="dateline"
-			style:background="linear-gradient(0.25turn, var(--light) {(currentWeek * 100) / 4000}%,
-			var(--dark) {(currentWeek * 100) / 4000}%)"
+			style:background="linear-gradient(0.25turn, var(--light) {($weeksOld * 100) / 4000}%,
+			var(--dark) {($weeksOld * 100) / 4000}%)"
 		>
-			<div class="year-start" style:left="{(currentWeek * 100) / 4000}%">
-				<div class="month-start" style:left="{(month * 100) / 12}%">
-					<p class="week-marker">{currentWeek} weeks lived</p>
+			<div class="year-start" style:left="{($weeksOld * 100) / 4000}%">
+				<div class="month-start">
+					<p class="week-marker">{$weeksOld} weeks lived</p>
+					<div class="arrow">
+						<ArrowUp size="24" />
+					</div>
 				</div>
 			</div>
 			<p class="first-day">{$birthday}</p>
-			<ArrowUp size="24" />
+
 			<p class="last-day">{lastDaymdy}</p>
 		</div>
 	</div>
@@ -74,7 +74,7 @@
 		border: 0.1em solid;
 		border-color: var(--blackish);
 		position: absolute;
-		transform: translate(-48%, 0);
+		transform: translate(-45%, 70%);
 		width: max-content;
 		top: 110%;
 		padding: 2px;
@@ -91,5 +91,12 @@
 		position: absolute;
 		right: -5%;
 		top: 110%;
+	}
+
+	.arrow {
+		position: relative;
+		transform: translate(-6px, -40%);
+		top: 110%;
+		padding: 2px;
 	}
 </style>

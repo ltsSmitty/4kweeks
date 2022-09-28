@@ -11,7 +11,6 @@ export const calculateWeeksFromBirthdayToToday = (birthday) => {
 
 export const calculateLastWeek = (birthday) => {
 	const bday = new Date(birthday);
-	console.log(`Birthday: ${bday}`);
 	const secondsInADay = 1000 * 3600 * 24;
 	let lastDay = new Date();
 	lastDay.setTime(bday.getTime() + 4000 * 7 * secondsInADay);
@@ -20,20 +19,20 @@ export const calculateLastWeek = (birthday) => {
 	}
 	const parsedDate =
 		lastDay.toISOString().split('T')[0] ?? lastDay ?? new Date().toISOString().split('T')[0];
-	console.log(`<in calculateLastWeek> lastDay: ${lastDay}, parsedDate: ${parsedDate}`);
 	return parsedDate;
 };
 
 export const getMessageForWeek = async (weekNumber) => {
 	let body = messageDB.messages.find((el) => el.id === Number(weekNumber))?.message;
-	let thisMessage = body;
+	let message = body;
+	let messageFound = true;
 
-	if (!thisMessage) {
+	if (!message) {
 		const { text, author } = await getRandomQuote();
-		thisMessage = `That message hasn't been written yet, but here's a good one: \n${text} - ${author}`;
+		messageFound = false;
+		message = `${text} - ${author}`;
 	}
-	console.log(`thisMessage: ${thisMessage}`);
-	return thisMessage;
+	return { message, messageFound };
 };
 
 const getRandomQuote = async () => {

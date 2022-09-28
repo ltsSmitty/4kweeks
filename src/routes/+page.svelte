@@ -1,118 +1,141 @@
 <script>
-	// style with a 10% gray colour.
-	// find other style options at https://carbon-components-svelte.onrender.com/
-	import {
-		Select,
-		SelectItem,
-		DatePicker,
-		DatePickerInput,
-		Button
-	} from 'carbon-components-svelte';
+	import { DatePicker, DatePickerInput, Button } from 'carbon-components-svelte';
+	import { analytics } from '$lib/stores';
 	import { onMount } from 'svelte';
-	import { analytics, birthday } from '$lib/stores';
-	import { calculateWeeksFromBirthdayToToday } from '$lib/helpers';
-	// import { sendSMS } from './api/sms/sms';
-	import * as db from './api/db/db';
+	import Dateline from './components/Dateline.svelte';
+	import FoldingTimeline from './components/FoldingTimeline.svelte';
+	import { birthday, weeksOld } from '$lib/stores';
+	import Results from './components/Results.svelte';
 	import Form from './components/Form.svelte';
 
-	let title = 'SMS sending test';
-	let sel = 0;
-	const sendSMS = async (message) => {
-		const myNum = '14074735068';
-		const response = await fetch('/api/sms', {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json'
-			},
-			body: JSON.stringify({
-				msgBody: message,
-				myNum
-			})
-		});
-		let resp = await response.json();
-		console.log(resp);
-	};
-
-	let firstName = 'p',
-		phoneNumber = Math.floor(Math.random() * 10000000000),
-		dayChoice,
-		validDate;
-
-	let weeksOld;
-	$: weeksOld = calculateWeeksFromBirthdayToToday(birthday);
-
-	const handleSubmit = () => {
-		const body = {
-			phone_number: phoneNumber,
-			first_name: firstName,
-			birthday: '04/24/1990',
-			message_day_preference: dayChoice,
-			subscribed: true
-		};
-		db.upsertUser(body);
-	};
-
-	const getUser = async () => {
-		let user = await db.getUser(phoneNumber);
-		console.log(user);
-	};
-
-	let message_day_preference = 0;
-	const getUsersbySubscriptionDay = async () => {
-		console.log(`attempting to get users with day ${message_day_preference}`);
-		let user = await db.getUsersbySubscriptionDay(message_day_preference);
-		console.log(user);
-	};
-
-	const fakeStartCronJob = async () => {
-		const response = await fetch('/api/cronjob', {
-			method: 'POST'
-		});
-		let resp = await response.json();
-		console.log(`cron job response: ${resp}`);
-	};
-
 	let anonymousId;
+	let birthdayTemp;
+	let isBirthdaySubmitted = false;
+
+	const generateRandomBirthday = () => {
+		let day = Math.floor(Math.random() * 29) + 1;
+		let month = Math.floor(Math.random() * 11) + 1;
+		let year = 2012 - Math.floor(Math.random() * 70);
+		return `${month}/${day}/${year}`;
+	};
+
+	$birthday = generateRandomBirthday();
+
 	onMount(async () => {
 		anonymousId = (await analytics.user()).anonymousId();
 	});
 </script>
 
-<div class="index">
-	<h2>{validDate}</h2>
-	<p>
-		{#if validDate}
-			You're already {weeksOld} weeks old!
-		{/if}
-	</p>
-	<button on:click={sendSMS(title)}> SMS me</button>
-	<button on:click={handleSubmit}> Add user to DB</button>
-	<br />
-	<button on:click={getUser}> Get user with phone number</button>
-	<br />
-	<button on:click={fakeStartCronJob}> Fake start cron job.</button>
-	<br />
-	<button on:click={getUsersbySubscriptionDay}> Get users with the given day</button>
-	<input type="text" bind:value={message_day_preference} /><br />
+<FoldingTimeline />
 
-	<input type="text" bind:value={title} />
-
-	<a href="/guides">View guides</a>
-	<a href="about">About</a>
+<div class="intro">
+	<h2 class="intro-text">The average human lives around four thousand weeks. Life is short.</h2>
 </div>
-<Form on:submit={(e) => ($birthday = e.detail)} />
+<div class="hypothetical">
+	<p class="h-text">
+		If you were born on {$birthday}, this is your life's timeline.
+	</p>
+</div>
+<Dateline />
+<div class="cta-wrapper">
+	<div class="cta-container">
+		<h4 class="cta">Find out how many are weeks left in your life:</h4>
+		<div class="date-picker">
+			<DatePicker on:change bind:value={birthdayTemp}>
+				<DatePickerInput
+					labelText="Birthday"
+					placeholder="mm/dd/yyyy"
+					helperText="Example: 05/29/1887"
+				/>
+			</DatePicker>
+		</div>
 
-<div style="margin: var(--cds-layout-01) 0">
-	Output: First Name: {firstName} <br />
-	Birthday: {$birthday}<br />
-	Phone number: {phoneNumber}<br />
-	Selected day: <strong>{sel}</strong><br />
+		<Button
+			kind="secondary"
+			type="submit"
+			on:click={() => {
+				$birthday = birthdayTemp || $birthday;
+				// TODO validate birthday then hide this whole div
+
+				//shrink the birthday input
+				let thisDiv = document.getElementsByClassName('cta-wrapper')[0];
+				thisDiv.style.transform = `scale(0)`;
+				thisDiv.style.transformOrigin = ' 25%  0';
+				thisDiv.style.transition = `transform 1.5s`;
+				setTimeout(() => {
+					thisDiv.style.display = 'none';
+				}, 800);
+
+				// expand the datepicker
+				isBirthdaySubmitted = true;
+
+				// TODO track submission
+			}}
+			size="field">Submit</Button
+		>
+	</div>
+</div>
+
+<div class="results">
+	<Results {isBirthdaySubmitted} />
+</div>
+
+<div class="form-wrapper" style:display={!isBirthdaySubmitted ? 'none' : 'initial'}>
+	<Form {isBirthdaySubmitted} />
 </div>
 
 <style>
-	.index {
-		text-align: center;
-		display: block;
-		margin: 20px auto;
+	.form-wrapper {
+		display: flex;
+	}
+
+	.intro {
+		align-items: center;
+		justify-content: center;
+		background-color: var(--light);
+	}
+	.intro-text {
+		width: 80%;
+		margin: auto;
+	}
+
+	.cta-wrapper {
+		/* background-color: lime; */
+		height: 128px;
+		left: 20%;
+		justify-content: center;
+		position: relative;
+		padding: 16px;
+		margin: 16px;
+	}
+
+	.cta-container {
+		display: flex;
+		/* text-align: center; */
+		/* padding: 0 70px; */
+	}
+
+	.cta-container > * {
+		padding: 8px;
+		/* background-color: aqua; */
+		/* position: relative; */
+	}
+
+	.cta {
+		margin-top: 32px;
+	}
+
+	.results {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+	}
+
+	.hypothetical {
+		margin: 24px 0 0 0;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		font: 4em;
 	}
 </style>
