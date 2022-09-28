@@ -32,9 +32,9 @@
 	<h2 class="intro-text">The average human lives around four thousand weeks. Life is short.</h2>
 </div>
 <div class="hypothetical">
-	<p class="h-text">
-		If you were born on {$birthday}, this is your life's timeline.
-	</p>
+	<p class="h-text">If you were born on&nbsp;</p>
+	<strong style:margin="8px 0"> {$birthday}</strong>
+	<p>, this is your life's timeline.</p>
 </div>
 <Dateline />
 <div class="cta-wrapper">
