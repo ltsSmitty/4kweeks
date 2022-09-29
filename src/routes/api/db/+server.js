@@ -18,13 +18,13 @@ export const POST = async ({ request }) => {
 			console.log(`switching on method '${method}'`);
 			switch (method) {
 				case 'getUser': {
-					return await new Response(JSON.stringify(db.getUser(queryBody)));
+					return await new Response(JSON.stringify(await db.getUser(queryBody)));
 				}
 				case 'upsertUser': {
-					return await new Response(JSON.stringify(db.upsertUser(queryBody)));
+					return await new Response(JSON.stringify(await db.upsertUser(queryBody)));
 				}
 				case 'getUsersbySubscriptionDay': {
-					return await new Response(JSON.stringify(db.getUsersbySubscriptionDay(queryBody)));
+					return await new Response(JSON.stringify(await db.getUsersbySubscriptionDay(queryBody)));
 				}
 				case 'deleteAllUsers': {
 					return await new Response(`Nothing written yet.`);
