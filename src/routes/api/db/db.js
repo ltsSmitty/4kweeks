@@ -20,7 +20,7 @@ export const getUsersbySubscriptionDay = async (day) => {
 
 const queryDb = async ({ method, body }) => {
 	try {
-		console.log(`in queryDB, attempting to fetch`);
+		console.log(`in queryDB, attempting to fetch method ${method}, body ${body}`);
 		const response = await fetch('/api/db', {
 			method: 'POST',
 			headers: {
@@ -36,6 +36,7 @@ const queryDb = async ({ method, body }) => {
 		return await new Response(JSON.stringify(resp));
 	} catch (err) {
 		console.log(`Error querying the DB: ${err}`);
+		// throw error(500, `Error querying db: ${err}`);
 		return await new Response(JSON.stringify(err));
 	}
 };

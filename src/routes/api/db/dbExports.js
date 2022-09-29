@@ -5,16 +5,21 @@ import { userCreated } from '$lib/segmentEvents';
 const supabase = createClient(env.SVELTEKIT_SUPABASE_URL, env.SVELTEKIT_SUPABASE_SEC_KEY);
 
 export const upsertUser = async (queryBody) => {
-	const { data } = await supabase.from('User').upsert([queryBody]);
-	console.log(`supabase response: ${await JSON.stringify(data)}`);
-	if (await data) {
-		try {
-			userCreated(queryBody);
-		} catch (e) {
-			console.log(`Error with analytics.js: ${e}`);
+	try {
+		const { data } = await supabase.from('User').upsert([queryBody]);
+		console.log(`supabase response: ${await JSON.stringify(data)}`);
+		if (await data) {
+			try {
+				userCreated(queryBody);
+			} catch (e) {
+				console.log(`Error with analytics.js: ${e}`);
+			}
 		}
+		return data;
+	} catch (err) {
+		console.log(`An error occurred with supabase: ${err}`);
+		return null;
 	}
-	return data;
 };
 
 export const getUser = async (queryBody) => {
