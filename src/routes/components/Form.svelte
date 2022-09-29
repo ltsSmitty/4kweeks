@@ -33,7 +33,7 @@
 		}
 
 		//send welcome SMS
-		// sms.sendIntroSMS(phoneNumber, $weeksOld);
+		sms.sendIntroSMS(phoneNumber, $weeksOld);
 	};
 </script>
 
