@@ -26,10 +26,14 @@
 			message_day_preference: dayAsNumber,
 			subscribed: true
 		};
-		db.upsertUser(body);
+		try {
+			db.upsertUser(body);
+		} catch (e) {
+			console.log(`Error upserting user: ${e}`);
+		}
 
 		//send welcome SMS
-		sms.sendIntroSMS(phoneNumber, $weeksOld);
+		// sms.sendIntroSMS(phoneNumber, $weeksOld);
 	};
 </script>
 

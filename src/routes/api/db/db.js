@@ -1,11 +1,3 @@
-// type DBMethod = 'getUser' | 'upsertUser'
-// export type DBMessage = {
-// 	phone_number: number | string,
-// 	first_name?: string,
-// 	birthday?: string,
-// 	message_day_preference?: number,
-// 	subscribed?: boolean
-// }
 import { error } from '@sveltejs/kit';
 
 export const upsertUser = async (user) => {

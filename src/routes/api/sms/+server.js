@@ -57,11 +57,11 @@ const sendIntroMessage = async (phoneNumber, weeksOld) => {
 	const introMessage = `You've signed up to receive weekly SMS messages with inspirational quotes from 4k Weeks. Make the best of your remaining ${
 		4000 - weeksOld
 	} weeks. Message STOP to unsubscribe.`;
-	sendMessage(phoneNumber, introMessage);
+	return await sendMessage(phoneNumber, introMessage);
 };
 
 const sendTestMessage = async (phoneNumber, msgBody) => {
-	sendMessage(phoneNumber, msgBody);
+	return await sendMessage(phoneNumber, msgBody);
 };
 
 const sendMessage = async (phoneNumber, msgBody) => {
