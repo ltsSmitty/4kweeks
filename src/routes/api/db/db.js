@@ -42,6 +42,7 @@ const queryDb = async ({ method, body }) => {
 		let resp = await response.json();
 		console.log(resp);
 	} catch (err) {
+		console.log(`Error querying the DB: ${err}`);
 		throw error(500, `there was an error: ${err}`);
 	}
 };
