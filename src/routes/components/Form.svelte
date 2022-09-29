@@ -10,7 +10,7 @@
 	const dayChoices = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 	let sel = dayChoices[1];
 
-	const onSubmit = () => {
+	const onSubmit = async () => {
 		// hide the form
 		let results = document.getElementById('info-form');
 		results.style.display = 'none';
@@ -27,7 +27,7 @@
 			subscribed: true
 		};
 		try {
-			db.upsertUser(body);
+			return await new Response(JSON.stringify(db.upsertUser(body)));
 		} catch (e) {
 			console.log(`Error upserting user: ${e}`);
 		}
