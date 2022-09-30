@@ -13,18 +13,19 @@ export const POST = async ({ request }) => {
 
 		let { toNum, msgBody, method, weeksOld } = smsProps;
 		toNum = await validatePhoneNumber(toNum);
+		let res;
 
 		try {
 			switch (method) {
 				case 'introMessage': {
-					sendIntroMessage(toNum, weeksOld);
+					res = await sendIntroMessage(toNum, weeksOld);
 					break;
 				}
 				case 'weeklyMessage': {
 					break;
 				}
 				default: {
-					sendTestMessage(toNum, msgBody);
+					res = await sendTestMessage(toNum, msgBody);
 					break;
 				}
 			}
@@ -33,7 +34,8 @@ export const POST = async ({ request }) => {
 			throw error(404, 'Failed to send SMS. Check server logs for more details.');
 		}
 
-		return await new Response(JSON.stringify(`done`));
+		// return await new Response(JSON.stringify(res));
+		return await res;
 	} catch (err) {
 		throw error(500, `Improper post, likely POST body was not json. ${err}`);
 	}

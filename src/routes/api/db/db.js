@@ -1,5 +1,3 @@
-import { error } from '@sveltejs/kit';
-
 export const upsertUser = async (user) => {
 	// export const upsertUser = async (user: DBMessage) => {
 	return await queryDb({ method: 'upsertUser', body: user });
@@ -20,7 +18,7 @@ export const getUsersbySubscriptionDay = async (day) => {
 
 const queryDb = async ({ method, body }) => {
 	try {
-		console.log(`in queryDB, attempting to fetch method ${method}, body ${JSON.stringify(body)}`);
+		// console.log(`in queryDB, attempting to fetch method ${method}, body ${JSON.stringify(body)}`);
 		const response = await fetch('/api/db', {
 			method: 'POST',
 			headers: {
@@ -32,7 +30,7 @@ const queryDb = async ({ method, body }) => {
 			})
 		});
 		let resp = await response.json();
-		console.log(resp);
+		// console.log(`db response: ${resp}`);
 		return await new Response(JSON.stringify(resp));
 	} catch (err) {
 		console.log(`Error querying the DB: ${err}`);
