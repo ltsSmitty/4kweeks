@@ -27,13 +27,13 @@
 			subscribed: true
 		};
 		try {
-			return await new Response(JSON.stringify(db.upsertUser(body)));
+			let res = await new Response(JSON.stringify(db.upsertUser(body)));
+			//send welcome SMS
+			sms.sendIntroSMS(phoneNumber, $weeksOld);
+			return res;
 		} catch (e) {
 			console.log(`Error upserting user: ${e}`);
 		}
-
-		//send welcome SMS
-		sms.sendIntroSMS(phoneNumber, $weeksOld);
 	};
 </script>
 
