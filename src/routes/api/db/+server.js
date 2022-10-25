@@ -13,7 +13,7 @@ export const POST = async ({ request }) => {
 				phone_number,
 				birthday,
 				message_day_preference,
-				subscribed: subscribed
+				sms_subscription_status: subscribed ? 'subscribed' : ''
 			};
 			console.log(`switching on method '${method}'`);
 			switch (method) {

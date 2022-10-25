@@ -3,23 +3,26 @@ var analytics = new Analytics('GRjitKsHLpyTNvEnci1lLqZC18omDbIy', { flushAt: 1 }
 // import { analytics } from '$lib/stores';
 
 export const userCreated = (user) => {
-	const { phone_number, first_name, birthday, message_day_preference, subscribed } = user;
+	const { phone_number, first_name, birthday, message_day_preference, sms_subscription_status } =
+		user;
 	analytics.identify({
 		userId: phone_number,
+		phone: phone_number,
 		traits: {
 			name: first_name,
 			phoneNumber: phone_number,
 			birthday,
 			message_day_preference,
-			subscribed
+			sms_subscription_status
 		}
 	});
 	analytics.track({
 		userId: phone_number,
 		event: 'User Created',
 		properties: {
+			phone: phone_number,
 			message_day_preference,
-			subscribed
+			sms_subscription_status
 		}
 	});
 };
